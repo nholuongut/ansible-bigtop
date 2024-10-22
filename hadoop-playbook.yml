@@ -1,0 +1,20 @@
+---
+- hosts: all
+  roles:
+    - { role: bigtop, tags: ["bigtop", "hadoop-deps"] }
+
+- hosts: zookeeper
+  roles:
+    - { role: zookeeper, tags: ["zookeeper"] }
+
+- hosts: hadoop
+  roles:
+    - { role: hadoop-common, tags: ["hadoop-common", "hadoop"] }
+
+- hosts: journalnodes
+  roles:
+    - { role: journalnode, tags: ["journalnodes", "hadoop"] }
+
+- hosts: namenodes
+  roles:
+    - { role: namenode, tags: ["namenodes", "hadoop"] }

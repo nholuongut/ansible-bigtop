@@ -1,0 +1,77 @@
+---
+- hosts: journalnodes
+  tasks:
+    - name: start journalnodes
+      systemd:
+        name: hadoop-hdfs-journalnode
+        state: started
+        enabled: no
+
+    - name: wait for journalnode to become available
+      wait_for:
+        host: "{{ ansible_hostname }}"
+        port: 8485
+        delay: 5
+  tags: ["hdfs", "journalnodes", "namenodes"]
+
+- hosts: namenodes[0]
+  tasks:
+    - block:
+        - name: format hdfs if necessary
+          shell: hdfs namenode -format {{ cluster_name | quote }} -force
+
+        - name: initialize hdfs shared edits directory
+          shell: hdfs namenode -initializeSharedEdits -force
+      become: yes
+      become_user: hdfs
+      when: ( hdfs_formatted == false )
+
+    - name: start first namenode
+      systemd:
+        name: hadoop-hdfs-namenode
+        state: started
+        enabled: no
+  tags: ["hdfs", "namenodes"]
+
+- hosts: namenodes[1]
+  tasks:
+    - block:
+        - name: bootstrap standby namenode if necessary
+          shell: hdfs namenode -bootstrapStandby
+
+        - name: format zookeeper
+          shell: hdfs zkfc -formatZK
+      become: yes
+      become_user: hdfs
+      when: ( hdfs_formatted == false )
+
+    - name: start second namenode
+      systemd:
+        name: hadoop-hdfs-namenode
+        state: started
+        enabled: no
+  tags: ["hdfs", "namenodes"]
+
+- hosts: namenodes
+  tasks:
+    - name: wait for namenodes to become available
+      wait_for:
+        host: "{{ ansible_hostname }}"
+        port: 8020
+        delay: 5
+
+    - name: start zkfc
+      systemd:
+        name: hadoop-hdfs-zkfc
+        state: started
+        enabled: no
+  tags: ["hdfs", "namenodes"]
+
+- hosts: datanodes
+  tasks:
+    - name: start datanodes
+      systemd:
+        name: hadoop-hdfs-datanode
+        state: started
+        enabled: yes
+  tags: ["hdfs", "datanodes"]

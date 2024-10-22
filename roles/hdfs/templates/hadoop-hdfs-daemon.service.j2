@@ -1,0 +1,26 @@
+{{ ansible_managed | comment }}
+
+[Unit]
+Description=HDFS {{ hdfs_daemon }} service
+Requires=network.target
+After=network.target remote-fs.target
+
+[Service]
+Type=forking
+User=hdfs
+Group=hdfs
+KillMode=process
+SuccessExitStatus=143
+RemainAfterExit=no
+EnvironmentFile=-/etc/default/hadoop
+EnvironmentFile=-/etc/default/{{ hdfs_daemon_name }}
+RuntimeDirectory={{ hdfs_service_name }}
+RuntimeDirectoryMode=0755
+WorkingDirectory={{ hdfs_working_dir }}
+PIDFile={{ hdfs_pid_dir }}/{{ hdfs_daemon_name }}.pid
+ExecStart={{ hdfs_hadoop_home }}/sbin/hadoop-daemon.sh --config {{ hdfs_conf_dir }} start {{ hdfs_daemon }}
+ExecStartPost=/usr/bin/sleep 5
+ExecStop={{ hdfs_hadoop_home }}/sbin/hadoop-daemon.sh --config {{ hdfs_conf_dir }} stop {{ hdfs_daemon }}
+
+[Install]
+WantedBy=multi-user.target

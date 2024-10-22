@@ -1,0 +1,8 @@
+---
+- hosts: zookeeper
+  tasks:
+    - name: stop zookeeper servers
+      systemd:
+        name: zookeeper-server
+        state: stopped
+  tags: ["zookeeper"]

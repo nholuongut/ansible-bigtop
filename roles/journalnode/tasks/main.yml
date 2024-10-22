@@ -1,0 +1,10 @@
+---
+# tasks file for journalnode
+- name: create the journalnode edits directory
+  file:
+    path: "{{ hdfs_journal_dir }}/{{ cluster_name }}"
+    state: directory
+    recurse: yes
+    owner: hdfs
+    group: hadoop
+    mode: 0775

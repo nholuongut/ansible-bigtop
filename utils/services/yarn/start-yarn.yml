@@ -1,0 +1,29 @@
+---
+- hosts: resourcemanagers
+  tasks:
+    - name: start resourcemanager
+      systemd:
+        name: hadoop-yarn-resourcemanager
+        state: started
+        enabled: no
+
+    - name: wait for resourcemanager to become available
+      wait_for:
+        host: "{{ ansible_hostname }}"
+        port: 8030
+
+    - name: start the historyserver
+      systemd:
+        name: hadoop-yarn-historyserver
+        state: started
+        enabled: no
+  tags: ["yarn", "resourcemanagers"]
+
+- hosts: nodemanagers
+  tasks:
+    - name: start nodemanagers
+      systemd:
+        name: hadoop-yarn-nodemanager
+        state: started
+        enabled: yes
+  tags: ["yarn", "nodemanagers"]

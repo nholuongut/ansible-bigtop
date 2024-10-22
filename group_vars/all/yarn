@@ -1,0 +1,42 @@
+yarn_service_name: hadoop-yarn
+
+### Settings for environment variables ###
+# As with HDFS, `home` here refers to the installation directory
+yarn_home: /usr/lib/hadoop-yarn
+
+# This is the home directory for the `yarn` user
+yarn_working_dir: /var/lib/{{ yarn_service_name }}
+
+yarn_log_dir: /var/log/{{ yarn_service_name }}
+
+yarn_pid_dir: /var/run/{{ yarn_service_name }}
+
+### Settings for config files ###
+
+yarn_nodes_include: "{{ hadoop_conf_dir }}/yarn.include"
+
+yarn_nodes_exclude: "{{ hadoop_conf_dir }}/yarn.exclude"
+
+yarn_scheduler_type: capacity
+
+yarn_scheduler_class: CapacityScheduler
+
+yarn_scheduler: "{{ yarn_scheduler_type }}.{{ yarn_scheduler_class }}"
+
+yarn_nm_cores: 8
+
+yarn_nm_memory_mb: 8192
+
+yarn_nm_vmem_pmem_ratio: 2.1
+
+yarn_min_core_allocation: 1
+
+yarn_min_memory_allocation: 1024
+
+yarn_max_core_allocation: "{{ yarn_nm_cores }}"
+
+yarn_max_memory_allocation: "{{ yarn_nm_memory_mb }}"
+
+yarn_admins:
+  - yarn
+  - root

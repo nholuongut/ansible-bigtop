@@ -1,0 +1,25 @@
+{{ ansible_managed | comment }}
+
+[Unit]
+Description=YARN {{ yarn_daemon }} service
+Requires=network.target
+After=network.target remote-fs.target
+
+[Service]
+Type=forking
+User=yarn
+Group=yarn
+KillMode=process
+SuccessExitStatus=143
+RemainAfterExit=no
+EnvironmentFile=-/etc/default/hadoop
+RuntimeDirectory={{ yarn_service_name }}
+RuntimeDirectoryMode=0755
+WorkingDirectory={{ yarn_working_dir }}
+PIDFile={{ yarn_pid_dir }}/{{ yarn_daemon_name }}.pid
+ExecStart={{ yarn_home }}/sbin/yarn-daemon.sh --config {{ hadoop_conf_dir }} start {{ yarn_daemon }}
+ExecStartPost=/usr/bin/sleep 5
+ExecStop={{ yarn_home }}/sbin/yarn-daemon.sh --config {{ hadoop_conf_dir }} stop {{ yarn_daemon }}
+
+[Install]
+WantedBy=multi-user.target

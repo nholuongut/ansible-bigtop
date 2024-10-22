@@ -1,0 +1,5 @@
+---
+# tasks file for namenode
+- name: setup ssh fencing for HA namenodes
+  import_tasks: sshfence.yml
+  when: ( hdfs_ha == true )

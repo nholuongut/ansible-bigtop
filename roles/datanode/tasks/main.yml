@@ -1,0 +1,10 @@
+---
+# tasks file for datanode
+- name: ensure data directories exist
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: hdfs
+    group: hdfs
+    mode: 0700
+  with_items: "{{ hdfs_data_dirs }}" 

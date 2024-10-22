@@ -1,0 +1,6 @@
+cluster_name: bigtop
+
+dns_domain: nholuong.com.vn
+
+java_home: /usr/lib/jvm/java
+

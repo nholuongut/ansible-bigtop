@@ -1,0 +1,14 @@
+---
+- hosts: zookeeper
+  tasks:
+    - name: start zookeeper servers
+      systemd:
+        name: zookeeper-server
+        state: started
+        enabled: yes
+    
+    - name: wait for zookeeper to become available
+      wait_for:
+        host: "{{ ansible_hostname }}"
+        port: 2181
+  tags: ["zookeeper"]
